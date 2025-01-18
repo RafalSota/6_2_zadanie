@@ -61,8 +61,6 @@ def add_contract(conn, contract):
    conn.commit()
    return cur.lastrowid
 
-
-
 def select_all(conn, table):
   """
   Query all rows in the table
@@ -114,7 +112,7 @@ def update(conn, table, id, **kwargs):
       cur = conn.cursor()
       cur.execute(sql, values)
       conn.commit()
-      print("OK")
+      print(f"Update {values}")
   except sqlite3.OperationalError as e:
       print(e)
 
@@ -164,8 +162,6 @@ create_company_sql = """
       company_type text CHECK(company_type IN ('prywatne', 'państwowe'))
    );
    """
-   #company(company_name, adress, NIP, company_type, first_name, last_name, phone, email, position)
-
 create_contracts_sql = """
    -- contracts table
    CREATE TABLE IF NOT EXISTS contracts (
@@ -229,62 +225,42 @@ if __name__ == '__main__':
       execute_sql(conn, create_contracts_sql)
       create_company()
       create_contracts_automat()
+
+      print("\nTABELA 'COMPANY': ")
+      sel01 = select_all(conn, "company")
+      for comp in sel01:
+         print(comp)
+
+      print("\nTABELA 'CONTARCTS': ")
+      sel02 = select_all(conn, "contracts")
+      for cont in sel02:
+         print(cont)
+
+      print("\nFirma ID = 7: ")
+      sel03 = select_where(conn, "company", ID = 7)
+      for comp in sel03:
+         print(comp)
+
+      print("\nKONTRAKTY FIRMY company_ID = 3 ze statusem 'ofertowany': ")
+      sel04 = select_where(conn, "contracts", company_ID = 3, status = "ofertowany")
+      for cont in sel04:
+         print(cont)
+
+      for i in range(41, 51): #zakres ID
+         update(conn, "contracts", i, status = "zakończony" )
+
+      print("Usuwam wszystkie kontrakty zawarte w 2023r.")
+      delete_where(conn, "contracts", year = 2023)
+
+      #print("Usuwam dane z tabeli 'contracts")
+      #delete_all(conn, "contracts")
+
       conn.close()
    else:
       print("Problem z połączeniem z bazą danych")
 
 
 """
-    conn = create_connection(r"database.db")
-    if conn:
-        execute_sql(conn, create_projects_sql)
-        print("Stworzyliśmy tabelę 'projects'")
-        execute_sql(conn, create_tasks_sql)
-        print("Stworzyliśmy tabelę 'tasks'")
-        #execute_sql(conn, add02_sql)
-        #conn.commit()
-        project01 = ("Powtórka z angielskiego", "2020-05-11 00:00:00", "2020-05-13 00:00:00")
-        proj_id = add_project(conn, project01)
-        task01 = (proj_id, "Present Simple", "powtórka czasu present simple", "niewykonane", "2020-05-11 00:00:00", "2020-05-12 20:00:00")
-        task02 = (proj_id, "Present Continuos", "powtórka czasu present continuous", "rozpoczęte", "2020-05-11 00:00:00", "2020-05-12 10:00:00")
-        task03 = (proj_id, "słówka TOP50", "nauczyć się słówek top50", "niewykonane", "2020-05-11 00:00:00", "2020-05-12 20:00:00")
-        task04 = (proj_id, "proste zdania", "konstrukcja prostych zdań", "niewykonane", "2020-05-11 00:00:00", "2020-05-12 20:00:00")
-        task_id = add_task(conn, task01)
-        task_id = add_task(conn, task02)
-        task_id = add_task(conn, task03)
-        task_id = add_task(conn, task04)
-        print(proj_id, task_id)
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM tasks")
-        rows = cur.fetchone()
-        print(rows)
-        rows = cur.fetchone()
-        print(rows)
-        rows = cur.fetchall()
-        print(rows)
-        #rozpoczete = select_task_by_status(conn, "rozpoczęte")
-        #print(rozpoczete)
-        #all_projects = select_all(conn, "projects")
-        #print(all_projects)
-        #select = select_where(conn, "tasks", nazwa = "słówka TOP50", id=7)
-        #print(select)
-        #update(conn, "tasks", 4, status="wykonaneeee", opis="KONSTRUKCJA PROSTYCH ZDAŃ")
-        #delete_where(conn, "tasks", status="wykonaneeee", opis="KONSTRUKCJA PROSTYCH ZDAŃ")
-        delete_all(conn, "tasks")
-        #cur.close()
-        
-        conn.close()
-    else:
-        print("Problem z połączeniem z bazą danych")
-"""
-"""
     with sqlite3.connect("database.db") as conn:
-      #execute_sql(conn, create_projects_sql)
-      print("Stworzyliśmy tabelę 'projects'")
-      #execute_sql(conn, create_tasks_sql)
-      print("Stworzyliśmy tabelę 'tasks'")
-      #execute_sql(conn, add01_sql)
-      #execute_sql(conn, add02_sql)
-      project01 = ("Powtórka z angielskiego", "2020-05-11 00:00:00", "2020-05-13 00:00:00")
-      add_project(conn, project01)
+      # wywołanie funkcji
 """
